@@ -1,0 +1,93 @@
+<html>
+
+<head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"
+		charset="utf-8"></script>
+	<script src="raphael-2.1.4.min.js"></script>
+	<script src="justgage.js"></script>
+
+	<script>
+		var accessToken = "c76bce1b1086927675dcf8eacb1f6440bf8a9b44";
+		var deviceID = "36001f000247363339343638"
+		var url = "https://api.particle.io/v1/devices/" + deviceID + "/gradosC";
+		var url2 = "https://api.particle.io/v1/devices/" + deviceID + "/gradosF";
+
+		function callbackC(data, status) {
+			if (status == "success") {
+				tempC = parseFloat(data.result);
+				tempC = tempC.toFixed(2);
+				gC.refresh(tempC);
+				backg(tempC, "C");
+				setTimeout(getReadingC, 1000);
+			}
+			else {
+				alert("There was a problem");
+			}
+		}
+		function getReadingC() {
+			$.get(url, { access_token: accessToken }, callbackC);
+		}
+
+		function callbackF(data, status) {
+			if (status == "success") {
+				tempF = parseFloat(data.result);
+				tempF = tempF.toFixed(2);
+				gF.refresh(tempF);
+				backg(tempF, "F");
+				setTimeout(getReadingF, 1000);
+			}
+			else {
+				alert("There was a problem");
+			}
+		}
+		function getReadingF() {
+			$.get(url2, { access_token: accessToken }, callbackF);
+		}
+
+		function backg(tempC, unit) {
+			if(unit == "C"){
+			var color;
+			if (tempC >= 0 && tempC <= 20) {
+				color = "blue";
+			} else if (tempC >= 20 && tempC <= 40) {
+				color = "orange";
+			} else {
+				color = "red";
+			}
+			document.body.style.backgroundColor = color;
+		}
+
+
+		}
+	</script>
+</head>
+
+<body>
+	<div id="gaugeC" class="100x60px"></div>
+	<div id="gaugeF" class="100x60px"></div>
+
+	<script>
+		var gC = new JustGage({
+			id: "gaugeC",
+			value: 0,
+			min: 0,
+			max: 400,
+			title: "Temperatura (C)"
+		});
+
+		var gF = new JustGage({
+			id: "gaugeF",
+			value: 0,
+			min: 0,
+			max: 400,
+			title: "Temperatura (F)"
+		});
+		getReadingC();
+		getReadingF();
+
+	</script>
+	</head>
+	</script>
+</body>
+
+</html>
