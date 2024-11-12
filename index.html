@@ -1,78 +1,84 @@
-<html>
+<!DOCTYPE html>
+<html lang="es">
 
 <head>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"
-		charset="utf-8"></script>
-	<script src="raphael-2.1.4.min.js"></script>
-	<script src="justgage.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Principal</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f4f8;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
 
-	<script>
-		var accessToken = "c76bce1b1086927675dcf8eacb1f6440bf8a9b44";
-		var deviceID = "36001f000247363339343638"
-		var url = "https://api.particle.io/v1/devices/" + deviceID + "/gradosC";
-		var url2 = "https://api.particle.io/v1/devices/" + deviceID + "/gradosF";
+        .container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+        }
 
-		function callbackC(data, status) {
-			if (status == "success") {
-				tempC = parseFloat(data.result);
-				tempC = tempC.toFixed(2);
-				gC.refresh(tempC);
-				backg(tempC, "C");
-				setTimeout(getReadingC, 1000);
-			}
-			else {
-				alert("There was a problem");
-			}
-		}
-		function getReadingC() {
-			$.get(url, { access_token: accessToken }, callbackC);
-		}
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
 
-		function callbackF(data, status) {
-			if (status == "success") {
-				tempF = parseFloat(data.result);
-				tempF = tempF.toFixed(2);
-				gF.refresh(tempF);
-				backg(tempF, "F");
-				setTimeout(getReadingF, 1000);
-			}
-			else {
-				alert("There was a problem");
-			}
-		}
-		function getReadingF() {
-			$.get(url2, { access_token: accessToken }, callbackF);
-		}
+        p {
+            color: #555;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
 
-	</script>
+        .button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .button.temp {
+            background-color: #4caf50;
+        }
+
+        .button.temp:hover {
+            background-color: #45a049;
+        }
+
+        .button.foco {
+            background-color: #368ff4;
+        }
+
+        .button.foco:hover {
+            background-color: #0c27db;
+        }
+    </style>
 </head>
 
 <body>
-	<div id="gaugeC" class="100x60px"></div>
-	<div id="gaugeF" class="100x60px"></div>
-
-	<script>
-		var gC = new JustGage({
-			id: "gaugeC",
-			value: 0,
-			min: 0,
-			max: 400,
-			title: "Temperatura (C)"
-		});
-
-		var gF = new JustGage({
-			id: "gaugeF",
-			value: 0,
-			min: 0,
-			max: 400,
-			title: "Temperatura (F)"
-		});
-		getReadingC();
-		getReadingF();
-
-	</script>
-	</head>
-	</script>
+    <div class="container">
+        <h1>Bienvenido</h1>
+        <p>Selecciona una opción para Monitoriar</p>
+        
+        <a href="grados.html" class="button temp">Monitoriar temperatura</a>
+        <a href="foco.html" class="button foco">Monitoriar Foco</a>
+    </div>
 </body>
 
 </html>
