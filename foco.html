@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Foco</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f4f8;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .button-container {
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button#on {
+            background-color: #4caf50;
+            color: #fff;
+        }
+
+        button#on:hover {
+            background-color: #45a049;
+        }
+
+        button#off {
+            background-color: #f44336;
+            color: #fff;
+        }
+
+        button#off:hover {
+            background-color: #d32f2f;
+        }
+
+        #message {
+            font-size: 16px;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        #message.success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        #message.error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Control de Foco</h1>
+        <div class="button-container">
+            <button id="on" onclick="controlLed('on')">Encender Foco</button>
+            <button id="off" onclick="controlLed('off')">Apagar Foco</button>
+        </div>
+        <p id="message"></p> <!-- Mensaje aquí -->
+    </div>
+
+    <script>
+        function controlLed(state) {
+            const url = "https://api.particle.io/v1/devices/36001f000247363339343638/led";
+            const data = {
+                access_token: "c76bce1b1086927675dcf8eacb1f6440bf8a9b44",
+                params: state
+            };
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                const messageElement = document.getElementById("message");
+
+                if (result.return_value === 1) {
+                    messageElement.textContent = `Foco ${state === 'on' ? 'encendido' : 'apagado'} exitosamente.`;
+                    messageElement.className = "success";
+                } else {
+                    messageElement.textContent = "Hubo un problema al intentar cambiar el estado del Foco.";
+                    messageElement.className = "error";
+                }
+            })
+            .catch(error => {
+                const messageElement = document.getElementById("message");
+                messageElement.textContent = "Error al conectar con el dispositivo.";
+                messageElement.className = "error";
+                console.error("Error:", error);
+            });
+        }
+    </script>
+</body>
+</html>
