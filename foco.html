@@ -110,13 +110,16 @@
             .then(result => {
                 const messageElement = document.getElementById("message");
 
-                if (result.return_value === 1) {
-                    messageElement.textContent = `Foco ${state === 'on' ? 'encendido' : 'apagado'} exitosamente.`;
-                    messageElement.className = "success";
-                } else {
-                    messageElement.textContent = "Hubo un problema al intentar cambiar el estado del Foco.";
-                    messageElement.className = "error";
-                }
+               if (result.return_value === 1 && state === 'on') {
+                        messageElement.textContent = "Foco encendido exitosamente.";
+                        messageElement.className = "success";
+                    } else if (result.return_value === 0 && state === 'off') {
+                        messageElement.textContent = "Foco apagado exitosamente.";
+                        messageElement.className = "success";
+                    } else {
+                        messageElement.textContent = "Hubo un problema al intentar cambiar el estado del Foco.";
+                        messageElement.className = "error";
+                    }
             })
             .catch(error => {
                 const messageElement = document.getElementById("message");
