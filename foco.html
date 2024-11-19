@@ -110,10 +110,10 @@
             .then(result => {
                 const messageElement = document.getElementById("message");
 
-               if (result.return_value === 1 && state === 'on') {
+               if (result.return_value === 1) {
                         messageElement.textContent = "Foco encendido exitosamente.";
                         messageElement.className = "success";
-                    } else if (result.return_value === 0 && state === 'off') {
+                    } else if (result.return_value === 0) {
                         messageElement.textContent = "Foco apagado exitosamente.";
                         messageElement.className = "success";
                     } else {
