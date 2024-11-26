@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Servo</title>
+    <title>Control del Servo</title>
     <style>
         body {
             display: flex;
@@ -19,128 +18,80 @@
         .container {
             text-align: center;
             background-color: #ffffff;
-            padding: 20px 40px;
+            padding: 40px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 300px;
+            max-width: 400px;
+            width: 90%;
         }
 
         h1 {
             color: #333;
             font-size: 24px;
+            margin-bottom: 20px;
         }
 
         .button-container {
-            margin: 20px 0;
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-size: 16px;
             font-weight: bold;
+            color: #fff;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: transform 0.2s ease, background-color 0.3s ease;
         }
 
-        button#move {
-            background-color: #007bff;
-            color: #fff;
+        button:hover {
+            transform: scale(1.05);
         }
 
-        button#move:hover {
-            background-color: #0056b3;
+        #off {
+            background-color: #ffa600;
         }
 
-        #message {
-            font-size: 16px;
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        #message.success {
-            color: #155724;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-        }
-
-        #message.error {
-            color: #721c24;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
+        #off:hover {
+            background-color: #ff8400;
         }
     </style>
-</head>
-
-<body>
-    <div class="container">
-        <h1>Control de Servo</h1>
-        <div class="button-container">
-            <button id="move" onclick="moveServo()">Mover Servo</button>
-        </div>
-        <p id="message"></p> <!-- Mensaje aquí -->
-    </div>
 
     <script>
-        function moveServo() {
-            const url = "https://api.particle.io/v1/devices/36001f000247363339343638/checkPin";
-            const data = {
-                access_token: "c76bce1b1086927675dcf8eacb1f6440bf8a9b44"
-            };
+        var accessToken = "c76bce1b1086927675dcf8eacb1f6440bf8a9b44";
+        var deviceID = "36001f000247363339343638";
+        var url = "https://api.particle.io/v1/devices/" + deviceID + "/controlServo";
 
+        
+        function switchOff() {
             fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
-                body: new URLSearchParams(data)
+                body: new URLSearchParams({
+                    params: "HIGH",
+                    access_token: accessToken
+                })
             })
                 .then(response => response.json())
-                .then(result => {
-                    const messageElement = document.getElementById("message");
-
-                    if (result.return_value === 1) { // D1 está HIGH
-                        controlServo(0); // Mueve el servo a 0°
-                        messageElement.textContent = "Servo movido a 0° (D1 en HIGH).";
-                        messageElement.className = "success";
-                    } else if (result.return_value === 0) { // D1 está LOW
-                        controlServo(90); // Mueve el servo a 90°
-                        messageElement.textContent = "Servo movido a 90° (D1 en LOW).";
-                        messageElement.className = "success";
-                    } else {
-                        messageElement.textContent = "Error: Estado de D1 desconocido.";
-                        messageElement.className = "error";
-                    }
-                })
-                .catch(error => {
-                    const messageElement = document.getElementById("message");
-                    messageElement.textContent = "Error al conectar con el dispositivo.";
-                    messageElement.className = "error";
-                    console.error("Error:", error);
-                });
-        }
-
-        function controlServo(angle) {
-            const url = "https://api.particle.io/v1/devices/36001f000247363339343638/controlServo";
-            const data = {
-                access_token: "c76bce1b1086927675dcf8eacb1f6440bf8a9b44",
-                params: angle.toString()
-            };
-
-            fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: new URLSearchParams(data)
-            })
-                .catch(error => {
-                    console.error("Error al mover el servo:", error);
-                });
+                .then(data => console.log("Servo movido a 90°", data))
+                .catch(error => console.error("Error:", error));
         }
     </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Control del Servo</h1>
+        <p>Utiliza el boton para alimentar.</p>
+        <div class="button-container">
+            
+            <button id="off" onclick="switchOff()">Alimentar</button>
+        </div>
+    </div>
 </body>
-
 </html>
