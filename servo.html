@@ -31,6 +31,20 @@
             margin-bottom: 20px;
         }
 
+        .form-container {
+            margin: 20px 0;
+        }
+
+        input {
+            width: 50px;
+            padding: 8px;
+            font-size: 16px;
+            text-align: center;
+            margin: 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
         .button-container {
             display: flex;
             justify-content: space-around;
@@ -59,16 +73,24 @@
         #off:hover {
             background-color: #ff8400;
         }
+
+        #setTime {
+            background-color: #0066cc;
+        }
+
+        #setTime:hover {
+            background-color: #005bb5;
+        }
     </style>
 
     <script>
         var accessToken = "c76bce1b1086927675dcf8eacb1f6440bf8a9b44";
         var deviceID = "36001f000247363339343638";
-        var url = "https://api.particle.io/v1/devices/" + deviceID + "/controlServo";
+        var url = "https://api.particle.io/v1/devices/" + deviceID;
 
-        
+        // Función para mover el servo manualmente
         function switchOff() {
-            fetch(url, {
+            fetch(url + "/controlServo", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
@@ -82,15 +104,53 @@
                 .then(data => console.log("Servo movido a 90°", data))
                 .catch(error => console.error("Error:", error));
         }
+
+        // Función para enviar la hora programada al dispositivo
+        function setFeedingTime() {
+            var hour = document.getElementById("hour").value;
+            var minute = document.getElementById("minute").value;
+
+            if (hour === "" || minute === "" || hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+                alert("Por favor ingresa una hora válida.");
+                return;
+            }
+
+            fetch(url + "/setFeedingTime", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({
+                    params: hour + ":" + minute,
+                    access_token: accessToken
+                })
+            })
+                .then(response => response.json())
+                .then(data => alert("Hora programada: " + hour + ":" + minute))
+                .catch(error => console.error("Error:", error));
+        }
     </script>
 </head>
 <body>
     <div class="container">
         <h1>Control del Servo</h1>
-        <p>Utiliza el boton para alimentar.</p>
+        <p>Utiliza el botón para alimentar al pez manualmente o programa una hora.</p>
+
+        <!-- Botón para mover el servo manualmente -->
         <div class="button-container">
-            
             <button id="off" onclick="switchOff()">Alimentar</button>
+        </div>
+
+        <!-- Formulario para asignar la hora -->
+        <div class="form-container">
+            <p>Programa la hora de alimentación:</p>
+            <label for="hour">Hora:</label>
+            <input type="number" id="hour" min="0" max="23" placeholder="HH">
+            <label for="minute">Minutos:</label>
+            <input type="number" id="minute" min="0" max="59" placeholder="MM">
+        </div>
+        <div class="button-container">
+            <button id="setTime" onclick="setFeedingTime()">Programar Hora</button>
         </div>
     </div>
 </body>
