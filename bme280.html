@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" charset="utf-8"></script>
+    <script src="raphael-2.1.4.min.js"></script>
+    <script src="justgage.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .gauge-container {
+            width: 200px;
+            height: 160px;
+            margin: auto;
+        }
+    </style>
+    <script>
+        var accessToken = "c76bce1b1086927675dcf8eacb1f6440bf8a9b44";
+        var deviceID = "36001f000247363339343638";
+        var urlTemperature = "https://api.particle.io/v1/devices/" + deviceID + "/temperature";
+        var urlPressure = "https://api.particle.io/v1/devices/" + deviceID + "/pressure";
+        var urlAltitude = "https://api.particle.io/v1/devices/" + deviceID + "/altitude";
+        var urlHumidity = "https://api.particle.io/v1/devices/" + deviceID + "/humidity";
+
+        function fetchData(url, gauge, label) {
+            $.get(url, { access_token: accessToken }, function (data, status) {
+                if (status === "success") {
+                    let value = parseFloat(data.result).toFixed(2);
+                    gauge.refresh(value);
+                } else {
+                    alert("Error fetching " + label);
+                }
+            });
+        }
+
+        function startFetching() {
+            setInterval(() => {
+                fetchData(urlTemperature, gTemperature, "Temperature");
+                fetchData(urlPressure, gPressure, "Pressure");
+                fetchData(urlAltitude, gAltitude, "Altitude");
+                fetchData(urlHumidity, gHumidity, "Humidity");
+            }, 1000);
+        }
+    </script>
+</head>
+<body>
+    <div class="grid-container">
+        <div id="gaugeTemperature" class="gauge-container"></div>
+        <div id="gaugePressure" class="gauge-container"></div>
+        <div id="gaugeAltitude" class="gauge-container"></div>
+        <div id="gaugeHumidity" class="gauge-container"></div>
+    </div>
+
+    <script>
+        var gTemperature = new JustGage({
+            id: "gaugeTemperature",
+            value: 0,
+            min: 0,
+            max: 100,
+            title: "Temperature (°C)"
+        });
+
+        var gPressure = new JustGage({
+            id: "gaugePressure",
+            value: 0,
+            min: 300,
+            max: 1100,
+            title: "Pressure (hPa)"
+        });
+
+        var gAltitude = new JustGage({
+            id: "gaugeAltitude",
+            value: 0,
+            min: 0,
+            max: 10000,
+            title: "Altitude (m)"
+        });
+
+        var gHumidity = new JustGage({
+            id: "gaugeHumidity",
+            value: 0,
+            min: 0,
+            max: 100,
+            title: "Humidity (%)"
+        });
+
+        startFetching();
+    </script>
+</body>
+</html>
